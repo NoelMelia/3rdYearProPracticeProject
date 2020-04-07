@@ -6,9 +6,9 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
 #define CHOICE_OFF   0 //Used to control LEDs
 #define CHOICE_NONE  0 //Used to check buttons
-#define CHOICE_RED  1
-#define CHOICE_GREEN 2
-#define CHOICE_WHITE 3
+#define CHOICE_RED  (1 << 0)
+#define CHOICE_GREEN (1 << 1)
+#define CHOICE_WHITE (1 << 2)
 
 
 #define LED_RED     9
@@ -21,8 +21,8 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 #define BUTTON_WHITE   6
 
 // Buzzer
-#define BUZZER1  12//10 Got Sick of Buzzer on
-#define BUZZER2  13//11 Change Back for Testing Purposes
+#define BUZZER1  10//10 Got Sick of Buzzer on
+#define BUZZER2  11//11 Change Back for Testing Purposes
 
 // Define game parameters
 #define ENTRY_TIME_LIMIT   5000 //Amount of time to press a button before game times out. 5000ms = 5 sec
@@ -68,31 +68,30 @@ void setup()
     //Turn on the upper right (green) LED
     setLEDs(CHOICE_GREEN);
     toner(CHOICE_GREEN, 150);
+
     setLEDs(CHOICE_RED | CHOICE_WHITE ); // Turn on the other LEDs until you release button
+
     while(checkButton() != CHOICE_NONE) ; // Wait for user to stop pressing button
   
-  /*
+  
+  
+  
+  }
   //Booting Up Display
-  lcd.print("Booting:"); //print the text to the lcd
-  for (int i = 0; i <= 100; i++){  // you can change the increment value here
+    lcd.print("Booting:"); //print the text to the lcd
+    for (int i = 0; i <= 100; i++){  // you can change the increment value here
     lcd.setCursor(8,0);
     if (i<100) lcd.print(" ");  //print a space if the percentage is < 100
     if (i<10) lcd.print(" ");  //print a space if the percentage is < 10
     lcd.print(i);
     lcd.print("%");
     delay(100);  //change the delay to change how fast the boot up screen changes
-    */
-  }
+    }
   lcd.clear();
 }
 
 void loop()
 {
-  lcd.print("Press Button");
-  lcd.setCursor(0,1);
-  lcd.print("to Begin");//High Score At Home Screen
-  delay(2000);
-  lcd.clear();
   notPressed(); // Blink lights while waiting for user to press a button
   
   delay(1000);  //change the delay to change how fast the boot up screen changes
@@ -129,9 +128,9 @@ boolean play(void)
   lcd.clear();
   randomSeed(millis()); // Seed the random generator with random amount of millis()
   gameRound = 0;// Reset the game to the beginning
-
+  
   lcd.print("Level ");
-  lcd.print( "1");
+  lcd.print( level);
   delay(2000);
   lcd.clear();
   gameRound = 0;
@@ -159,33 +158,27 @@ boolean play(void)
       lcd.print("Score ");
       lcd.print(bestMove);
       
-      if(currentMove >= LEVEL_2)
+      if(currentMove >= LEVEL_2 && level != 3)
       {
-          lcd.print("Level ");
-          lcd.print( "2");
-          delay(2000);
-          lcd.clear();
+          level = 2;
       }
-      if(currentMove >= LEVEL_3)
+      if(currentMove >= LEVEL_3 )
       {
-        lcd.print("Level ");
-        lcd.print( "3");
-        delay(2000);
-        lcd.clear(); 
+          level = 3; 
       }
-      delay(1000); // Player was correct, delay before playing moves
+      lcd.setCursor(0,0);
+      lcd.print("Level ");
+      lcd.print( level);
+      delay(2000); // Player was correct, delay before playing moves
       lcd.clear();
+      if(highScore < bestMove)
+      {
+          highScore = bestMove;
+            
+      }
       
   }
-  if(bestMove >= highScore)
-  {
-      highScore = bestMove;
-      lcd.setCursor(0,1);
-      lcd.print("New Highscore ");
-      lcd.print(highScore);
-      delay(3000); // Player was correct, delay before playing moves
-      lcd.clear();   
-  }
+  
   return true; // Player made it through all the rounds to win!
 }  
 // Plays the current contents of the game moves
@@ -219,16 +212,16 @@ void setLEDs(byte leds)
   else
     digitalWrite(LED_RED, LOW);
 
+  
+
   if ((leds & CHOICE_GREEN) != 0)
     digitalWrite(LED_WHITE, HIGH);
   else
     digitalWrite(LED_WHITE, LOW);
-
-  if ((leds & CHOICE_WHITE) != 0)
+if ((leds & CHOICE_WHITE) != 0)
     digitalWrite(LED_GREEN, HIGH);
   else
     digitalWrite(LED_GREEN, LOW);
-
 }
 
 // Wait for a button to be pressed to Start the game
@@ -287,7 +280,7 @@ void sound(int buzzLen, int buzzDelay)
   // Loop until the remaining play time is less than a single buzzDelay
   while (buzzLength > (buzzDelay * 2))
   {
-    buzzLength -= buzzDelay * 2; //Decrease the remaining play time
+    buzzLength -= buzzDelay * 2; //Decrease
 
     // Toggle the buzzer at various speeds
     digitalWrite(BUZZER1, LOW);
@@ -306,14 +299,25 @@ void notPressed(void)
 {
   while(1) 
   {
+    // Text to Display
+    lcd.print("Press Button");
+    lcd.setCursor(0,1);
+    lcd.print("to Begin");//High Score At Home Screen
+    delay(2000);
+    lcd.clear();
     setLEDs(CHOICE_RED);
-    delay(250);
+    delay(500);
     if (checkButton() != CHOICE_NONE) return;
     setLEDs(CHOICE_WHITE);
-    delay(250);
+    delay(500);
     if (checkButton() != CHOICE_NONE) return;
     setLEDs(CHOICE_GREEN);
-    delay(250);
+    delay(500);
     if (checkButton() != CHOICE_NONE) return;
+    // High Score to be Stored and Displayed
+    lcd.print("High Score ");
+    lcd.print(highScore);
+    delay(2000);
+    lcd.clear();
   }
 }
