@@ -1,0 +1,80 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(10, 9, 5, 4, 3, 2);
+
+const int greenLight = 13;
+const int blueLight = 12;
+const int redLight = 11;
+
+int pattern[100];
+int i = 0;
+int randomNumber;
+
+void setup()
+{
+  pinMode(greenLight, OUTPUT);
+  pinMode(blueLight, OUTPUT);
+  pinMode(redLight, OUTPUT);
+
+  randomSeed(analogRead(A0));
+  // set up the LCD's number of columns and rows:
+  lcd.begin(16, 2);
+}
+
+void loop()
+{
+  randomNumber = random(11, 14);
+
+  if (randomNumber == 11)
+  {
+    digitalWrite(redLight, HIGH);
+    lcd.setCursor(0, 0);
+    lcd.print("Red Light On");
+    delay(1000);
+    lcd.clear();
+
+
+  }
+  else
+  {
+
+    digitalWrite(redLight, LOW);
+
+  }
+
+  if (randomNumber == 12)
+  {
+    digitalWrite(blueLight, HIGH);
+    lcd.setCursor(0, 0);
+    lcd.print("Blue Light On");
+    delay(1000);
+    lcd.clear();
+
+  }
+  else
+  {
+
+    digitalWrite(blueLight, LOW);
+
+  }
+
+  if (randomNumber == 13)
+  {
+    digitalWrite(greenLight, HIGH);
+    lcd.setCursor(0, 0);
+    lcd.print("Green Light On");
+    delay(1000);
+    lcd.clear();
+
+  }
+  else
+  {
+
+    digitalWrite(greenLight, LOW);
+
+  }
+
+
+
+  delay(1000);
+}

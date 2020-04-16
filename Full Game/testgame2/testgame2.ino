@@ -11,8 +11,8 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 #define CHOICE_WHITE (1 << 2)
 
 
-#define LED_RED     9
-#define LED_WHITE   8
+#define LED_RED    9
+#define LED_WHITE  8
 #define LED_GREEN  3
 
 // Button pin definitions
@@ -72,13 +72,9 @@ void setup()
     setLEDs(CHOICE_RED | CHOICE_WHITE ); // Turn on the other LEDs until you release button
 
     while(checkButton() != CHOICE_NONE) ; // Wait for user to stop pressing button
-  
-  
-  
-  
   }
   //Booting Up Display
-    lcd.print("Booting:"); //print the text to the lcd
+    lcd.print("Loading:"); //print the text to the lcd
     for (int i = 0; i <= 100; i++){  // you can change the increment value here
     lcd.setCursor(8,0);
     if (i<100) lcd.print(" ");  //print a space if the percentage is < 100
